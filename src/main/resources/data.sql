@@ -1,0 +1,1 @@
+INSERT INTO category (name) VALUES ('música'), ('deportes'), ('fotografía'), ('matemáticas'), ('arte')
