@@ -9,6 +9,7 @@ import com.lowlayer.app.dto.PostRequestDTO;
 import com.lowlayer.app.dto.PostResponseDTO;
 import com.lowlayer.app.exceptions.NotFoundException;
 import com.lowlayer.app.mappers.PostMapper;
+import com.lowlayer.app.model.AppUser;
 import com.lowlayer.app.model.Category;
 import com.lowlayer.app.model.Post;
 import com.lowlayer.app.repositories.CategoryRepository;
@@ -32,8 +33,9 @@ public class PostService implements IpostService{
     }
 
     @Override
-    public PostResponseDTO createPost(PostRequestDTO postDto) {
+    public PostResponseDTO createPost(PostRequestDTO postDto, AppUser owner) {
         Post post = postMapper.toEntity(postDto);
+        post.setAuthor(owner);
         post.setCategory(
             findCategoryOrThrow(
                 postDto.catName()

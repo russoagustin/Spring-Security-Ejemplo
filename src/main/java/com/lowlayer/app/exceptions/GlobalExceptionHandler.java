@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -22,7 +23,9 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponseDTO<Map<String, String>>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex, BindingResult result) {
+    public ResponseEntity<ErrorResponseDTO<Map<String, String>>> handleMethodArgumentNotValidException(MethodArgumentNotValidException ex) {
+
+        BindingResult result = ex.getBindingResult();
 
         Map<String, String> errors = new HashMap<>();
         result.getFieldErrors().forEach(err -> {
@@ -32,5 +35,15 @@ public class GlobalExceptionHandler {
         ErrorResponseDTO<Map<String, String>> errorResponse = new ErrorResponseDTO<>(ErrorCode.VALIDATION_ERROR, errors);
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST.value()).body(errorResponse);
+    }
+
+    @ExceptionHandler(NotOwnerException.class)
+    public ResponseEntity<ErrorResponseDTO<String>> handleNotOwnerException(NotOwnerException ex) {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN.value()).body(new ErrorResponseDTO<>(ErrorCode.FORBIDDEN, ex.getMessage()));
+    }
+
+    @ExceptionHandler(AuthorizationDeniedException.class)
+    public ResponseEntity<ErrorResponseDTO<String>> handleAuthorizationException(AuthorizationDeniedException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED.value()).body(new ErrorResponseDTO<>(ErrorCode.UNAUTHENTICATED, ex.getMessage()));
     }
 }

@@ -42,4 +42,8 @@ public class Post {
 
     private Instant createdAt;
     private Instant updatedAt;
+
+    @ManyToOne
+    @JoinColumn(name = "author_id")
+    private AppUser author;
 }

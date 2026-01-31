@@ -8,4 +8,5 @@ import com.lowlayer.app.model.Post;
 @Repository
 public interface PostRepository extends CrudRepository<Post,Integer>{
 
+    boolean existsByIdAndAuthor_Username(Integer postId, String username);
 }
